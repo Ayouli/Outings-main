@@ -1,0 +1,24 @@
+{% extends "base.html.twig" %}
+
+{% block body %}
+    <h1 class="h3">
+        {% block errorTitle %}
+            Erreur
+        {% endblock %}
+    </h1>
+
+    <div class="alert alert-danger">
+        {% block errorMessage %}
+            {# Error #}
+        {% endblock %}
+
+        <br/><br/>
+        {{ exception.message }}
+    </div>
+
+    <div class="text-center">
+        <div class="btn-group">
+            {% include 'fragment/home.html.twig' %}
+        </div>
+    </div>
+{% endblock %}

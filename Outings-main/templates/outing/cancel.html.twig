@@ -1,0 +1,50 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}
+    Annulation de sortie | {{ parent() }}
+{% endblock %}
+
+{% block body %}
+    <h1 class="h3">Annulation de sortie</h1>
+
+    <fieldset>
+        <legend>Informations</legend>
+        <div class="row">
+            <label for="name" class="col form-label text-secondary text-end">Nom</label>
+            <span id="name" class="col form-label">{{ outing.name }}</span>
+        </div>
+        <div class="row">
+            <label for="date" class="col form-label text-secondary text-end">Date</label>
+            <span id="date" class="col form-label">{{ outing.date|date('d/m/Y - H:i') }}</span>
+        </div>
+        <div class="row">
+            <label for="campus" class="col form-label text-secondary text-end">Campus</label>
+            <span id="campus" class="col form-label">{{ outing.campus.name }}</span>
+        </div>
+        <div class="row">
+            <label for="location" class="col form-label text-secondary text-end">Lieu</label>
+            <span id="location" class="col form-label">{{ outing.location.name }}</span>
+        </div>
+        <div class="row">
+            <label for="address" class="col form-label text-secondary text-end">Adresse</label>
+            <span id="address" class="col form-label">
+                {{ outing.location.street }} <br/>
+                {{ outing.location.city.postalCode }} {{ outing.location.city.name }}
+            </span>
+        </div>
+    </fieldset>
+
+    {{ form_start(cancelForm) }}
+    <fieldset>
+        {{ form_errors(cancelForm) }}
+        {{ form_widget(cancelForm) }}
+    </fieldset>
+
+    <div class="text-center">
+        <div class="btn-group">
+            <button type="submit" class="me-1 btn btn-sm btn-danger">Valider</button>
+            {% include "fragment/home.html.twig" %}
+        </div>
+    </div>
+    {{ form_end(cancelForm) }}
+{% endblock %}

@@ -1,0 +1,13 @@
+{% extends 'fragment/error.html.twig' %}
+
+{% block title %}
+    Accès non autorisé | {{ parent() }}
+{% endblock %}
+
+{% block errorTitle %}
+    Accès non autorisé
+{% endblock %}
+
+{% block errorMessage %}
+    L'accès à cette page n'est pas autorisé.
+{% endblock %}

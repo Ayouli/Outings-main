@@ -1,0 +1,13 @@
+{% extends 'fragment/error.html.twig' %}
+
+{% block title %}
+    Erreur | {{ parent() }}
+{% endblock %}
+
+{% block errorTitle %}
+    Erreur
+{% endblock %}
+
+{% block errorMessage %}
+    Une erreur inattendue s'est produite (code ({{ exception.statusCode }})).
+{% endblock %}

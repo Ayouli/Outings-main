@@ -1,0 +1,140 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}
+    Sorties | {{ parent() }}
+{% endblock %}
+
+{% block body %}
+    <h1 class="h3">Sorties</h1>
+
+    <div class="text-end">
+        <h6>Date : {{ "now"|date("d/m/Y") }}</h6>
+        <h6>Utilisateur : {{ app.user.fullName }}</h6>
+    </div>
+
+    <fieldset>
+        <legend>Filtres</legend>
+        {{ form_start(searchForm) }}
+        {{ form_errors(searchForm) }}
+        <div class="row align-items-center">
+            <div class="col">
+                {{ form_row(searchForm.campus) }}
+                {{ form_row(searchForm.name) }}
+                <div class="row">
+                    <div class="col">
+                        {{ form_row(searchForm.minDate) }}
+                    </div>
+                    <div class="col">
+                        {{ form_row(searchForm.maxDate) }}
+                    </div>
+                </div>
+            </div>
+            <div class="col">
+                {{ form_row(searchForm.isUserOrganizer) }}
+                {{ form_row(searchForm.isUserRegistrant) }}
+                {{ form_row(searchForm.isUserNotRegistrant) }}
+                {{ form_row(searchForm.isFinished) }}
+            </div>
+        </div>
+
+        <div class="text-end">
+            <div class="btn-group">
+                <button type="submit" class="btn btn-sm btn-secondary">Rechercher</button>
+            </div>
+        </div>
+        {{ form_end(searchForm) }}
+    </fieldset>
+
+    <legend>Sorties</legend>
+    {% if (outings) %}
+        <table class="my-3 table table-bordered table-striped table-secondary table-sm align-middle text-center">
+            <tr>
+                <th scope="col">Nom</th>
+                <th scope="col">Date</th>
+                <th scope="col">Fin des inscriptions</th>
+                <th scope="col">Inscrits / Places</th>
+                <th scope="col">État</th>
+                <th scope="col">Inscrit</th>
+                <th scope="col">Organisateur</th>
+                <th scope="col">Actions</th>
+            </tr>
+            {% for outing in outings %}
+                <tr>
+                    <td>{{ outing.name }}</td>
+                    <td>
+                        {{ outing.date|date("d/m/Y") }}<br/>
+                        {{ outing.date|date("H:i") }}
+                    </td>
+                    <td>{{ outing.registrationClosingDate|date("d/m/Y") }}</td>
+                    <td>{{ outing.registrants|length }} / {{ outing.maxRegistrants }}</td>
+                    <td>{{ outing.state.friendlyName }}</td>
+                    <td>{{ app.user in outing.registrants ? "Oui" : "-" }}</td>
+                    <td>
+                        <a href="{{ path('user_detail', {id: outing.organizer.id}) }}">{{ outing.organizer.shortName }}</a>
+                        {% if (app.user == outing.organizer) %}
+                            <br/>
+                            <span>(vous)</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        <div class="btn-group">
+                            {% set isOutingPrivate = outingService.isOutingPrivate(outing) %}
+                            {% set isOutingPublic = outingService.isOutingPublic(outing) %}
+                            {% set isOutingOpenForRegistration = outingService.isOutingOpenForRegistration(outing) %}
+                            {% set isOutingUpcoming = outingService.isOutingUpcoming(outing) %}
+                            {% set isUserOrganizer = (app.user == outing.organizer) %}
+                            {% set isUserRegistrant = (app.user in outing.registrants) %}
+
+                            {% if ((isUserOrganizer) and (isOutingPrivate)) %}
+                                <a href="{{ path('outing_edit', {id: outing.id}) }}"
+                                   class="btn btn-sm btn-primary">
+                                    Modifier
+                                </a>
+                                <a href="{{ path('outing_publish', {id: outing.id}) }}"
+                                   class="ms-1 btn btn-sm btn-success">
+                                    Publier
+                                </a>
+                            {% endif %}
+
+                            {% if (isOutingPublic) %}
+                                <a href="{{ path('outing_detail', {id: outing.id}) }}"
+                                   class="btn btn-sm btn-secondary">
+                                    Voir
+                                </a>
+
+                                {% if (((is_granted('ROLE_ADMIN')) or (isUserOrganizer)) and (isOutingUpcoming)) %}
+                                    <a href="{{ path('outing_cancel', {id: outing.id}) }}"
+                                       class="ms-1 btn btn-sm btn-danger">
+                                        Annuler
+                                    </a>
+                                {% endif %}
+
+                                {% if ((isOutingOpenForRegistration) and (not (isUserRegistrant))) %}
+                                    <a href="{{ path('outing_register', {id: outing.id}) }}"
+                                       class="ms-1 btn btn-sm btn-success">
+                                        S'inscrire
+                                    </a>
+                                {% elseif ((isOutingUpcoming) and (isUserRegistrant)) %}
+                                    <a href="{{ path('outing_unregister', {id: outing.id}) }}"
+                                       class="ms-1 btn btn-sm btn-primary">
+                                        Se désinscrire
+                                    </a>
+                                {% endif %}
+                            {% endif %}
+                        </div>
+                    </td>
+                </tr>
+            {% endfor %}
+        </table>
+    {% else %}
+        <div class="alert alert-danger">
+            Aucune sortie n'a été trouvée.
+        </div>
+    {% endif %}
+
+    <div class="text-center">
+        <div class="btn-group">
+            <a href="{{ path('outing_create') }}" class="btn btn-sm btn-primary">Nouvelle sortie</a>
+        </div>
+    </div>
+{% endblock %}

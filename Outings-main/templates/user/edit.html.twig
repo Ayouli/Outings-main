@@ -1,0 +1,24 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}
+    Mon profil | {{ parent() }}
+{% endblock %}
+
+{% block body %}
+    <h1 class="h3">Mon profil</h1>
+
+    {{ form_start(editForm) }}
+    <fieldset>
+        <legend>Informations</legend>
+        {{ form_errors(editForm) }}
+        {{ form_widget(editForm) }}
+    </fieldset>
+
+    <div class="text-center">
+        <div class="btn-group">
+            <button type="submit" class="me-1 btn btn-sm btn-primary">Valider</button>
+            {% include "fragment/home.html.twig" %}
+        </div>
+    </div>
+    {{ form_end(editForm) }}
+{% endblock %}

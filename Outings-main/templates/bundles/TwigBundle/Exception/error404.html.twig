@@ -1,0 +1,13 @@
+{% extends 'fragment/error.html.twig' %}
+
+{% block title %}
+    Page introuvable | {{ parent() }}
+{% endblock %}
+
+{% block errorTitle %}
+    Page introuvable
+{% endblock %}
+
+{% block errorMessage %}
+    La page demandée est introuvable.
+{% endblock %}
